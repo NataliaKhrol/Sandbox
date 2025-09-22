@@ -1,34 +1,27 @@
 package tests;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.Test;
 import tests.parent.BaseTest;
-
-import java.time.Duration;
 
 import static org.testng.Assert.*;
 
 public class LoginTest extends BaseTest {
 
-    @Test
-    public void checkErrorLogin() {
-        WebDriverWait wait = new WebDriverWait(browser, Duration.ofSeconds(5));
+    @Test(description = "проверка корректной авторизации", priority = 2)
+    public void checkCorrectLogin() throws InterruptedException {
         loginPage.open();
-        loginPage.loginThruZip("1");
+        loginPage.loginThruZip("standard_user", "secret_sauce");
+        assertTrue(productsPage.isTitlePresent());
+        assertEquals(productsPage.getTitle(), "Products", "Название заголовка не соответствует ожидаемому");
 
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".error_message")));
-        String errorMsg = browser.findElement(By.cssSelector(".error_message")).getText();
-        assertEquals(errorMsg, "Oops, error on page. ZIP code should have 5 digits");
+        productsPage.addToCart("Sauce Labs Onesie");
+        loginPage.open();
     }
 
-    @Test
-    public void checkLogin() {
+    @Test(dependsOnMethods = "checkCorrectLogin", priority = 1)
+    public void checkLockedUserLogin() {
         loginPage.open();
-        loginPage.loginThruZip("12345");
-
-        boolean isPresent = browser.findElement(By.xpath("//*[text()='Sign Up']")).isDisplayed();
-        assertTrue(isPresent);
+        loginPage.loginThruZip("locked_out_user", "secret_sauce");
+        assertEquals(loginPage.checkErrorMsg(), "Epic sadface: Sorry, this user has been locked out.");
     }
 }
