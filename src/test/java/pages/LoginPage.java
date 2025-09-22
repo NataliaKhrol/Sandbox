@@ -3,22 +3,27 @@ package pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-public class LoginPage {
-    WebDriver browser;
+public class LoginPage extends BasePage {
+    private static final By LOGIN_INPUT = By.id("user-name");
+    private static final By PASSWORD_INPUT = By.id("password");
+    private static final By LOGIN_BTN = By.id("login-button");
+    private static final By ERROR = By.xpath("//*[@data-test='error']");
 
-    public LoginPage(WebDriver browser) {
-        this.browser = browser;
+    public LoginPage(WebDriver driver) {
+        super(driver);
     }
-
-    private static final By ZIP_INPUT = By.xpath("//*[@name='zip_code']");
-    private static final By CONTINUE_BTN = By.cssSelector("*[value='Continue']");
 
     public void open() {
-        browser.get("https://www.sharelane.com/cgi-bin/register.py");
+        driver.get(BASE_URL + "/inventory.html");
     }
 
-    public void loginThruZip(String zipCode) {
-        browser.findElement(ZIP_INPUT).sendKeys(zipCode);
-        browser.findElement(CONTINUE_BTN).click();
+    public void loginThruZip(String login, String password) {
+        driver.findElement(LOGIN_INPUT).sendKeys(login);
+        driver.findElement(PASSWORD_INPUT).sendKeys(password);
+        driver.findElement(LOGIN_BTN).click();
+    }
+
+    public String checkErrorMsg() {
+        return driver.findElement(ERROR).getText();
     }
 }
