@@ -17,9 +17,25 @@ public class LoginPage extends BasePage {
         driver.get(BASE_URL + "/inventory.html");
     }
 
-    public void loginThruZip(String login, String password) {
+    public void open(String url) {
+        driver.get(BASE_URL + url);
+    }
+
+    public void login(String login, String password) {
+        fillLoginField(login);
+        fillPasswordField(password);
+        clickSubmit();
+    }
+
+    public void fillLoginField(String login) {
         driver.findElement(LOGIN_INPUT).sendKeys(login);
+    }
+
+    public void fillPasswordField(String password) {
         driver.findElement(PASSWORD_INPUT).sendKeys(password);
+    }
+
+    public void clickSubmit() {
         driver.findElement(LOGIN_BTN).click();
     }
 
